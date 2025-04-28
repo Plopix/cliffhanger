@@ -1,3 +1,3 @@
 # CLIffhanger
 
-https://cliffhange.dev
+https://cliffhanger.dev
