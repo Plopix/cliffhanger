@@ -1,0 +1,29 @@
+{
+    "name": "cliffhanger",
+    "module": "index.ts",
+    "type": "module",
+    "version": "0.0.1",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/plopix/cliffhanger.git"
+    },
+    "author": "Sébastien Morel <plopix@gmail.com>",
+    "contributors": [
+        "Abhigyan Khaund",
+        "Sébastien Morel"
+    ],
+    "license": "MIT",
+    "description": "A CLI that runs your scripts and exposes them as tools through a built-in, extensible MCP server.",
+    "devDependencies": {
+        "@types/bun": "latest"
+    },
+    "peerDependencies": {
+        "typescript": "^5"
+    },
+    "dependencies": {
+        "@modelcontextprotocol/sdk": "^1.10.2",
+        "commander": "^13.1.0",
+        "picocolors": "^1.1.1",
+        "zod": "^3.24.3"
+    }
+}

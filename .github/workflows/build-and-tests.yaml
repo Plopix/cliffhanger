@@ -1,0 +1,28 @@
+name: Build And Tests
+
+on:
+    workflow_call:
+
+jobs:
+    build-and-test:
+        name: 🏗️ Build and Test
+        runs-on: ubuntu-latest
+        steps:
+            - name: ⬇️ Checkout repo
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+                  fetch-tags: false
+
+            - name: ⎔ Setup bun
+              uses: oven-sh/setup-bun@v2
+
+            - name: 📥 Download deps on Mono
+              run: bun install --frozen-lockfile
+
+            - name: 🔍 Valid commit message
+              if: ${{ github.event_name == 'pull_request' }}
+              run: bun commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --verbose
+
+            - name: 💄 Prettier
+              run: bun prettier:check

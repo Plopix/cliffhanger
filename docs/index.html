@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>CLIffhanger</title>
+        <style>
+            /* Reset and base styles */
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: 'Courier New', monospace;
+                background-color: #1a0933;
+                color: #fff;
+                background-image:
+                    linear-gradient(0deg, rgba(26, 9, 51, 0.95) 0%, rgba(26, 9, 51, 0.8) 100%),
+                    repeating-linear-gradient(
+                        0deg,
+                        transparent 0,
+                        transparent 2px,
+                        rgba(120, 70, 255, 0.3) 2px,
+                        rgba(120, 70, 255, 0.3) 4px
+                    );
+                background-size:
+                    100% 100%,
+                    100px 100px;
+                perspective: 1000px;
+                min-height: 100vh;
+                overflow-x: hidden;
+            }
+
+            .grid {
+                position: absolute;
+                width: 200%;
+                height: 200vh;
+                background-image:
+                    linear-gradient(90deg, rgba(120, 0, 255, 0.3) 1px, transparent 1px),
+                    linear-gradient(0deg, rgba(120, 0, 255, 0.3) 1px, transparent 1px);
+                background-size: 80px 80px;
+                transform: rotateX(75deg) translateY(-50%) translateZ(-100px);
+                transform-origin: center;
+                bottom: -50%;
+                left: -50%;
+            }
+
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 2rem;
+                position: relative;
+                z-index: 1;
+            }
+
+            .header {
+                text-align: center;
+                margin-bottom: 4rem;
+                padding-top: 3rem;
+            }
+
+            .logo {
+                width: 180px;
+                height: 180px;
+                margin-bottom: 1rem;
+                filter: drop-shadow(0 0 15px rgba(255, 0, 255, 0.7));
+            }
+
+            h1 {
+                font-size: 5rem;
+                margin-bottom: 1rem;
+                background-image: linear-gradient(90deg, #00eeff, #ff00ff);
+                -webkit-background-clip: text;
+                background-clip: text;
+                color: transparent;
+                text-shadow: 0 0 20px rgba(255, 41, 231, 0.5);
+                letter-spacing: 5px;
+            }
+
+            .subtitle {
+                font-size: 1.5rem;
+                margin-bottom: 2rem;
+                color: #ff9e68;
+            }
+
+            .content {
+                display: flex;
+                flex-direction: column;
+                gap: 3rem;
+            }
+
+            .card {
+                background: rgba(32, 12, 64, 0.7);
+                border-radius: 8px;
+                padding: 2rem;
+                border: 1px solid #ff00ff;
+                box-shadow:
+                    0 0 20px rgba(255, 0, 255, 0.3),
+                    0 0 40px rgba(0, 238, 255, 0.1) inset;
+                backdrop-filter: blur(5px);
+                transition: all 0.3s ease;
+            }
+
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow:
+                    0 0 30px rgba(255, 0, 255, 0.5),
+                    0 0 60px rgba(0, 238, 255, 0.2) inset;
+            }
+
+            .card h2 {
+                font-size: 2rem;
+                margin-bottom: 1rem;
+                color: #00eeff;
+                text-shadow: 0 0 10px rgba(0, 238, 255, 0.7);
+            }
+
+            .card p {
+                font-size: 1.1rem;
+                line-height: 1.6;
+                color: #e0e0ff;
+                margin-bottom: 1rem;
+            }
+
+            .terminal {
+                background-color: rgba(5, 5, 20, 0.8);
+                border-radius: 8px;
+                padding: 1rem;
+                font-family: 'Courier New', monospace;
+                border: 1px solid #00eeff;
+                position: relative;
+                margin: 2rem 0;
+                overflow: hidden;
+            }
+
+            .terminal-header {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 25px;
+                background: linear-gradient(90deg, #ff00ff, #00eeff);
+                border-radius: 8px 8px 0 0;
+                display: flex;
+                align-items: center;
+                padding: 0 10px;
+            }
+
+            .terminal-dots {
+                display: flex;
+                gap: 6px;
+            }
+
+            .terminal-dot {
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                background-color: #ffffff;
+            }
+
+            .terminal-content {
+                margin-top: 30px;
+                font-size: 1rem;
+                color: #ffffff;
+            }
+
+            .command {
+                color: #00eeff;
+                margin-bottom: 0.5rem;
+            }
+
+            .command::before {
+                content: '$ ';
+            }
+
+            .output {
+                color: #e0e0ff;
+                margin-bottom: 1rem;
+            }
+
+            .btn {
+                display: inline-block;
+                background: linear-gradient(90deg, #ff00ff, #00eeff);
+                color: white;
+                padding: 0.8rem 2rem;
+                border-radius: 30px;
+                text-decoration: none;
+                font-weight: bold;
+                margin-top: 1rem;
+                border: none;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                font-size: 1rem;
+                text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+                box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
+            }
+
+            .btn:hover {
+                transform: scale(1.05);
+                box-shadow: 0 0 25px rgba(255, 0, 255, 0.8);
+            }
+
+            .sun {
+                position: absolute;
+                top: 150px;
+                width: 100%;
+                height: 200px;
+                background: radial-gradient(ellipse at center, #ff5e00, #ff009e, transparent 70%);
+                opacity: 0.7;
+                z-index: -2;
+                filter: blur(30px);
+            }
+
+            .footer {
+                text-align: center;
+                margin-top: 5rem;
+                padding: 2rem 0;
+                color: #a78bff;
+            }
+
+            code {
+                background-color: rgba(5, 5, 20, 0.8);
+                padding: 0.2rem 0.4rem;
+                border-radius: 4px;
+                font-family: 'Courier New', monospace;
+                color: #00eeff;
+            }
+
+            pre {
+                background-color: rgba(5, 5, 20, 0.8);
+                border-radius: 8px;
+                padding: 1rem;
+                font-family: 'Courier New', monospace;
+                border: 1px solid #00eeff;
+                position: relative;
+                margin: 2rem 0;
+                overflow: auto;
+                color: #e0e0ff;
+                max-height: 400px;
+            }
+
+            .beta-badge {
+                background: linear-gradient(90deg, #ff00ff, #ff5e00);
+                color: white;
+                padding: 0.3rem 0.8rem;
+                border-radius: 30px;
+                font-size: 0.9rem;
+                font-weight: bold;
+                margin-left: 1rem;
+                display: inline-block;
+                vertical-align: middle;
+                animation: pulse 2s infinite;
+            }
+
+            a {
+                color: #00eeff;
+                text-decoration: none;
+                transition: color 0.3s ease;
+            }
+
+            @keyframes pulse {
+                0% {
+                    box-shadow: 0 0 0 0 rgba(255, 0, 255, 0.7);
+                }
+                70% {
+                    box-shadow: 0 0 0 10px rgba(255, 0, 255, 0);
+                }
+                100% {
+                    box-shadow: 0 0 0 0 rgba(255, 0, 255, 0);
+                }
+            }
+
+            @media (max-width: 768px) {
+                h1 {
+                    font-size: 3rem;
+                }
+
+                .card {
+                    padding: 1.5rem;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="grid"></div>
+        <div class="sun"></div>
+
+        <div class="container">
+            <header class="header">
+                <img src="cliffhanger-logo.png" alt="CLIFFHANGER Logo" class="logo" />
+                <h1>CLIffhanger <span class="beta-badge">BETA</span></h1>
+                <p class="subtitle">Automate. Execute. Expose to an LLM.</p>
+            </header>
+
+            <main class="content">
+                <div class="card">
+                    <h2>What is CLIffhanger?</h2>
+                    <p>
+                        It is a CLI that runs your scripts and exposes them as tools through a built-in, extensible MCP
+                        server.
+                    </p>
+                    <p>
+                        This project was built during an amazing
+                        <a href="https://allthingsweb.dev" target="_blank">All Things Web</a> hackathon and is currently
+                        in BETA. We're looking for contributors to help improve it!
+                    </p>
+
+                    <div class="terminal">
+                        <div class="terminal-header">
+                            <div class="terminal-dots">
+                                <div class="terminal-dot"></div>
+                                <div class="terminal-dot"></div>
+                                <div class="terminal-dot"></div>
+                            </div>
+                        </div>
+                        <div class="terminal-content">
+                            <div class="command">
+                                curl -LSs https://plopix.github.io/cliffhanger/install.bash | bash
+                            </div>
+                        </div>
+                    </div>
+
+                    <p>
+                        After installation, create a <code>~/.cliffhanger/tools.json</code> file in your home directory
+                        that looks like this:
+                    </p>
+
+                    <pre>
+[
+    {
+        "name": "get-top-processes",
+        "description": "Get the top processes by memory usage that are running currently.",
+        "command": [
+            "bash",
+            "/path/to/a/script/topprocess.sh"
+        ]
+    },
+    {
+        "name": "send-imessage",
+        "description": "Send a iMessage",
+        "command": [
+            "bash",
+            "/path/to/another/script/testmessage.sh"
+        ],
+        "arguments": {
+            "message": {
+                "type": "string",
+                "required": true,
+                "description": "The message to send"
+            },
+            "recipient": {
+                "type": "string",
+                "required": true,
+                "description": "The recipient of the message"
+            },
+            "time": {
+                "type": "string",
+                "required": false,
+                "description": "when to send the message"
+            }
+        },
+        "options": {
+            "force": {
+                "type": "boolean",
+                "description": "Force the message to be sent"
+            },
+            "plop": {
+                "type": "number",
+                "description": "Plop the message"
+            }
+        }
+    }
+]</pre
+                    >
+                    <p>Note: `description` is actually usefull for the LLM.</p>
+
+                    <p>Now if your run</p>
+
+                    <div class="terminal">
+                        <div class="terminal-header">
+                            <div class="terminal-dots">
+                                <div class="terminal-dot"></div>
+                                <div class="terminal-dot"></div>
+                                <div class="terminal-dot"></div>
+                            </div>
+                        </div>
+                        <div class="terminal-content">
+                            <div class="command">~/cliff run --help</div>
+                        </div>
+                    </div>
+                    <p>You will see your scripts as commands you can run!</p>
+
+                    <div class="terminal">
+                        <div class="terminal-header">
+                            <div class="terminal-dots">
+                                <div class="terminal-dot"></div>
+                                <div class="terminal-dot"></div>
+                                <div class="terminal-dot"></div>
+                            </div>
+                        </div>
+                        <div class="terminal-content">
+                            <div class="command">~/cliff serve</div>
+                        </div>
+                    </div>
+                    <p>
+                        Will run the MCP Server, but most likely you will setup the MCP client and not call this command
+                        manually.
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h2>Key Features</h2>
+                    <p>• Unify your scripts in an unique CLI.</p>
+                    <p>• to expose them as Tools via a Model Context Protocol (MCP) server.</p>
+                    <p>• Seamless integration with your existing scripts (any language)</p>
+
+                    <a href="#learn-more" class="btn">Learn More</a>
+                </div>
+
+                <div class="card">
+                    <h2>Contribute</h2>
+                    <p>
+                        CLIffhanger was built during a hackathon and is still in early development. We're looking for
+                        passionate contributors to help us improve it!
+                    </p>
+                    <p>Whether you're a developer, designer, or documentation writer, your help is welcome.</p>
+                    <p>Visit our GitHub repository to get started:</p>
+                    <a href="https://github.com/plopix/cliffhanger" class="btn">Join Us on GitHub</a>
+                </div>
+            </main>
+
+            <footer class="footer">
+                <p>&copy; 2025 CLIFFHANGER. All rights reserved.</p>
+            </footer>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,10 @@
+node_modules
+dist
+build
+*.lock
+*.mdx
+.cache
+.git
+.turbo
+.next
+.astro
